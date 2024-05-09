@@ -9,3 +9,5 @@ pydantic==2.5.3
 starlette==0.35.1
 uvicorn==0.25.0
 python-multipart==0.0.9
+geemap
+earthpy
