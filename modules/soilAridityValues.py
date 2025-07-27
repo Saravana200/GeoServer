@@ -14,7 +14,7 @@ async def mapCreatorSoilAridity(position,centerpos):
     geometry=ee.Geometry(geojsonObject)
 
     end_date = datetime.today()
-    start_date = end_date - timedelta(days=14)
+    start_date = end_date - timedelta(days=60)
 
     dataset = ee.ImageCollection('MODIS/061/MOD11A1').filterDate(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
     dataset1 = ee.ImageCollection('MODIS/061/MOD09CMG').filterDate(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
@@ -65,7 +65,9 @@ async def mapCreatorSoilAridity(position,centerpos):
 
     minValue = stats.get('LST_Day_1km_min')
     maxValue = stats.get('LST_Day_1km_max')
-    avgValue = stats.get('LST_Day_1km_mean')
+    avgValue = stats.get('LST_Day_1km_mean').getInfo()
+
+    print("Average Soil Ariditiy Value:", avgValue)
 
     diffVis = {
     "min": minValue,
@@ -73,8 +75,7 @@ async def mapCreatorSoilAridity(position,centerpos):
     "palette": ['blue', 'green', 'yellow', 'red']
     }
 
-    Map.addLayer(AI.clip(geometry), diffVis, 'Land Surface Temperature (Masked)');
-    Map
+    Map.addLayer(AI.clip(geometry), diffVis, 'Land Surface Temperature (Masked)')
 
     params = {
         'dimensions': '1024x1024',

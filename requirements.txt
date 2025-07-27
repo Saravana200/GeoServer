@@ -4,11 +4,13 @@ fastapi==0.109.0
 geemap==0.32.1
 h11==0.14.0
 httpcore==1.0.2
-httpx==0.25.2
-pydantic==2.5.3
+httpx
+pydantic
 starlette==0.35.1
 uvicorn==0.25.0
 python-multipart==0.0.9
+mistralai==1.2.5
+dotenv
 geemap
 earthpy
 geedim
