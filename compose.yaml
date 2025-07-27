@@ -1,5 +1,22 @@
+version: "3.8"
+
 services:
   web:
     build: .
     ports:
       - "8036:8036"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:test@123@db:5432/Satfarm
+
+  db:
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test@123
+      POSTGRES_DB: Satfarm
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data

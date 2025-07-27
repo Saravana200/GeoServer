@@ -103,7 +103,7 @@ async def image(pos:Coordinates = Body(...),user = Depends(get_user), service:So
       coordinates=[c1,c2,c3,c4]
       data = await mapCreatorSoilAridity(coordinates,(pos.lat,pos.long))
       image_bytes = requests.get(data["url"])
-      if await service.save_soil_aridity(user_id=user.id,value=data["avgValue"],coordinates=pos):   
+      if await service.save_soil_aridity(user_id=user.id,value=data["avg_value"],coordinates=pos):   
         return Response(content=image_bytes.content,media_type="image/png")
 
 
