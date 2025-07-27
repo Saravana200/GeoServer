@@ -5,6 +5,7 @@ GET http://127.0.0.1:8036/
 ###
 POST http://127.0.0.1:8036/SoilMoistureImage
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.jll9P9t9vS7DU-jeqjl28zTnpNkypkvJ7BuFbcXthu
 
 {
     "lat":12.986376,
@@ -13,8 +14,10 @@ Content-Type: application/json
 
 #testing soil aridity map
 ###
+
 POST http://127.0.0.1:8036/SoilAridityImage
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.jll9P9t9vS7DU-jeqjl28zTnpNkypkvJ7BuFbcXKgxc
 
 {
     "lat":12.986376,
@@ -25,6 +28,7 @@ Content-Type: application/json
 ###
 POST http://127.0.0.1:8036/weather
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.jll9P9t9vS7DU-jeqjl28zTnpNkypkvJ7BuFbcXKgxc
 
 {
     "lat":12.986376,

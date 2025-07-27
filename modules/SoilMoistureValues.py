@@ -1,5 +1,6 @@
 import ee
 import geemap
+from datetime import datetime, timedelta
 
 async def mapCreator(position,centerpos):
     Map=geemap.Map(center=centerpos,zoom=11.5)
@@ -12,7 +13,12 @@ async def mapCreator(position,centerpos):
     }
     geometry=ee.Geometry(geojsonObject)
 
-    dataset = ee.ImageCollection('NASA/SMAP/SPL3SMP_E/006').filter(ee.Filter.date('2025-01-01', '2025-04-30')).filterBounds(geometry)
+    end_date = datetime.today()
+    start_date = end_date - timedelta(days=14)
+
+    dataset = ee.ImageCollection('NASA/SMAP/SPL3SMP_E/006')\
+        .filter(ee.Filter.date(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d')))\
+        .filterBounds(geometry)
 
     soilMositureSurface = dataset.select('soil_moisture_am')
 
@@ -20,11 +26,13 @@ async def mapCreator(position,centerpos):
 
     min = merged_image.reduceRegion(reducer=ee.Reducer.min(), geometry=geometry, scale=1000)
     max = merged_image.reduceRegion(reducer=ee.Reducer.max(), geometry=geometry, scale=1000)
-
-    print("Maximum Soil Moisture Value:", max.get('soil_moisture_am').getInfo())
+    avg = merged_image.reduceRegion(reducer=ee.Reducer.mean(), geometry=geometry, scale=1000)
 
     min_value = min.get('soil_moisture_am').getInfo()
     max_value = max.get('soil_moisture_am').getInfo()
+    avg_value = avg.get('soil_moisture_am').getInfo()
+
+    print("Average Soil Moisture Value:", avg_value)
 
     vis={
         "min": min_value,
@@ -45,4 +53,4 @@ async def mapCreator(position,centerpos):
 
     url = merged_image.getThumbURL(params)
     print("Fetching image from URL:", url)
-    return url
+    return {"url":url,"avg_value":avg_value}
