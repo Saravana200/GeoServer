@@ -1,5 +1,6 @@
 import ee
 import geemap
+from datetime import datetime, timedelta
 
 async def mapCreatorSoilAridity(position,centerpos):
 
@@ -12,8 +13,11 @@ async def mapCreatorSoilAridity(position,centerpos):
     }
     geometry=ee.Geometry(geojsonObject)
 
-    dataset = ee.ImageCollection('MODIS/061/MOD11A1').filterDate('2025-01-31', '2025-04-01')
-    dataset1 = ee.ImageCollection('MODIS/061/MOD09CMG').filterDate('2025-01-31', '2025-04-01')
+    end_date = datetime.today()
+    start_date = end_date - timedelta(days=60)
+
+    dataset = ee.ImageCollection('MODIS/061/MOD11A1').filterDate(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+    dataset1 = ee.ImageCollection('MODIS/061/MOD09CMG').filterDate(start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
 
     def calculate_rmax(image):
         image = image.clip(geometry)
@@ -50,14 +54,20 @@ async def mapCreatorSoilAridity(position,centerpos):
 
 
     stats = AI.reduceRegion(
-    reducer= ee.Reducer.minMax(), # Calculate min and max
-    geometry= geometry, # Use the image geometry (whole image)
-    scale= 500, # Set an appropriate scale (in meters, adjust based on your dataset)
-    maxPixels= 1e8 # Set a high maxPixels to ensure that all pixels are considered
+        reducer= ee.Reducer.minMax().combine(
+            reducer2=ee.Reducer.mean(),
+            sharedInputs=True
+        ),
+        geometry= geometry,
+        scale= 500,
+        maxPixels= 1e8
     )
 
-    minValue = stats.get('LST_Day_1km_min');
-    maxValue = stats.get('LST_Day_1km_max');
+    minValue = stats.get('LST_Day_1km_min')
+    maxValue = stats.get('LST_Day_1km_max')
+    avgValue = stats.get('LST_Day_1km_mean').getInfo()
+
+    print("Average Soil Ariditiy Value:", avgValue)
 
     diffVis = {
     "min": minValue,
@@ -65,8 +75,7 @@ async def mapCreatorSoilAridity(position,centerpos):
     "palette": ['blue', 'green', 'yellow', 'red']
     }
 
-    Map.addLayer(AI.clip(geometry), diffVis, 'Land Surface Temperature (Masked)');
-    Map
+    Map.addLayer(AI.clip(geometry), diffVis, 'Land Surface Temperature (Masked)')
 
     params = {
         'dimensions': '1024x1024',
@@ -79,4 +88,4 @@ async def mapCreatorSoilAridity(position,centerpos):
     url = AI.getThumbURL(params)
     print("Fetching image from URL:", url)
 
-    return url
+    return {"url":url,"avg_value":avgValue}

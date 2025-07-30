@@ -1,2 +1,7 @@
 .env
 gee_apikey.json
+.vscode/launch.json
+*.cer
+.DS_Store
+pgdata/
+*.pyc

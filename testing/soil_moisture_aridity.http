@@ -1,0 +1,45 @@
+###
+GET http://127.0.0.1:8036/
+
+#testing soil moisture map
+###
+POST http://127.0.0.1:8036/SoilMoistureImage
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.jll9P9t9vS7DU-jeqjl28zTnpNkypkvJ7BuFbcXKgxc
+
+{
+    "lat":12.986376,
+    "long":77.579869
+}
+
+#testing soil aridity map
+###
+POST http://127.0.0.1:8036/SoilAridityImage
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.jll9P9t9vS7DU-jeqjl28zTnpNkypkvJ7BuFbcXKgxc
+
+{
+    "lat":12.986376,
+    "long":77.579869
+}
+
+#testing chat data with weather details
+###
+POST http://127.0.0.1:8036/weather
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.jll9P9t9vS7DU-jeqjl28zTnpNkypkvJ7BuFbcXKgxc
+
+{
+    "lat":12.986376,
+    "long":77.579869
+}
+
+#testing chat data 
+###
+POST http://127.0.0.1:8036/chat
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGVzdCJ9.jll9P9t9vS7DU-jeqjl28zTnpNkypkvJ7BuFbcXKgxc
+
+{
+    "text":"hi how are you?"
+}

@@ -8,4 +8,4 @@ COPY . .
 
 EXPOSE 8036
 
-CMD ["python","server.py"]  
+ENTRYPOINT ["./entrypoint.sh"]
