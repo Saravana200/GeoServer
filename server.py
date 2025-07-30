@@ -166,6 +166,29 @@ async def get_weather(coords:Coordinates = Body(...),user = Depends(get_user)):
     else:
         return {"error": f"Failed to retrieve weather data. Status code: {response.status_code}"}
     
+
+@app.post("/chat")
+async def get_weather(data = Body(...),user = Depends(get_user)):
+    if(not user):
+           raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="invalid user",
+        )
+    mistral_api_key = os.getenv("MISTRAL_KEY")
+    model = "mistral-large-latest"
+    client = Mistral(api_key=mistral_api_key)
+    chat_response = client.chat.complete(
+        model = model,
+        messages = [
+            {
+                "role": "user",
+                "content": data["text"],
+            },
+        ]
+    )
+    print(chat_response.choices[0].message.content)
+    return JSONResponse(status_code=200,content={"reply":chat_response.choices[0].message.content})
+    
 @app.get("/")
 async def test():
     wind_speed =20
