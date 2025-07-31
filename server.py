@@ -1,3 +1,4 @@
+import httpx
 from modules import *
 from models import *
 from security import *
@@ -65,6 +66,10 @@ async def singup(token:str=Depends(register_user)):
 @app.post("/login")
 async def login(token:str = Depends(login_user)):
     return JSONResponse(status_code=200,content={"token":token})
+
+@app.get("/user-details")
+async def login(user:User = Depends(get_user)):
+    return JSONResponse(status_code=200,content={"name":user.name})
      
 
 @app.post("/SoilMoistureImage",responses={200:{"content":{"image/png":{}}}},response_class=Response)
@@ -188,6 +193,54 @@ async def get_weather(data = Body(...),user = Depends(get_user)):
     )
     print(chat_response.choices[0].message.content)
     return JSONResponse(status_code=200,content={"reply":chat_response.choices[0].message.content})
+
+@app.get("/news")
+async def get_filtered_news(data = Body(...), user=Depends(get_user)):
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="invalid user",
+        )
+
+    news_api_key = os.getenv("NEWS_API_KEY")
+    if not news_api_key:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="News API key not configured",
+        )
+
+    query = data.get("query", "agriculture")
+
+    url = "https://newsapi.org/v2/everything"
+    params = {
+        "q": query,
+        "language": "en",
+        "apiKey": news_api_key,
+        "pageSize": 10,
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url, params=params)
+
+    if response.status_code != 200:
+        raise HTTPException(
+            status_code=response.status_code,
+            detail="Failed to fetch news",
+        )
+
+    articles = response.json().get("articles", [])
+
+    filtered_articles = []
+
+    for article in articles: 
+        if article.get("title") and article.get("url"):
+            filtered_articles.append({
+                "title": article["title"],
+                "url": article["url"],
+                "description": article["description"]
+            })
+
+    return JSONResponse(status_code=200, content={"articles": filtered_articles})
     
 @app.get("/")
 async def test():
